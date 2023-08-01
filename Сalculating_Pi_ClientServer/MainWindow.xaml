@@ -5,62 +5,63 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Сalculating_Pi_ClientServer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="700">
+        Title="MainWindow" Height="440" Width="700">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="0.9*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <StackPanel Margin="10">
+        <StackPanel Margin="10 10 10 0">
             <TextBlock Text="Введите координаты точек X и Y (Значение от 0 до 1)"/>
             <StackPanel Orientation="Horizontal" Margin="10">
                 <TextBlock Text="Координата точки по оси X"/>
-                <TextBox Width="110" Margin="20 0"/>
+                <TextBox Text="{Binding CoordinateX}" Width="110" Margin="20 0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10 0">
                 <TextBlock Text="Координата точки по оси Y"/>
-                <TextBox Width="110" Margin="20 0"/>
+                <TextBox Text="{Binding CoordinateY}" Width="110" Margin="20 0"/>
             </StackPanel>
             <StackPanel>
-                <Button x:Name="addPointToList" Content="Добавить точку в список" Width="250" Margin="0 10 "/>
-                <Button x:Name="addRandomPointToList" Content="Добавить случайную точку в список" Width="250"/>
-                <Button x:Name="clearPointsList" Content="Очистить список точек" Width="250" Margin="0 10 "/>
-                <Button x:Name="sendPointsListToServer" Content="Отправить список на сервер" Width="250"/>
+                <Button Command="{Binding AddPointToList}" Content="Добавить точку в список" Width="250" Margin="0 10 "/>
+                <Button Command="{Binding AddRandomPointToList}" Content="Добавить случайную точку в список" Width="250"/>
+                <Button Command="{Binding ClearPointList}" Content="Очистить список точек" Width="250" Margin="0 10 "/>
+                <Button Command="{Binding SendPointListToServer}" Content="Отправить список на сервер" Width="250"/>
             </StackPanel>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Margin="10" VerticalAlignment="Center">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="1" Margin="10 0">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Текущее значение Пи:" Margin="10"/>
+                <Border BorderBrush="#4C000000" BorderThickness="2" CornerRadius="7" Height="30">
+                    <TextBox Text="{Binding Pi}" TextAlignment="Center" VerticalAlignment="Center" BorderThickness="0"/>
+                </Border>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 10 0 0">
                 <TextBlock Text="Статус:"/>
-                <Border Margin="10 0" CornerRadius="7" Background="Red" Height="20">
+                <Border Margin="10 0" CornerRadius="7" Background="{Binding StatusColor}" Height="20">
                     <Border.Effect>
-                        <DropShadowEffect Color="Black" ShadowDepth="2" Opacity="1" BlurRadius="7"/>
+                        <DropShadowEffect Color="Gray" ShadowDepth="2" Opacity="1" BlurRadius="7"/>
                     </Border.Effect>
-                    <TextBlock Text="Offline" Width="175" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding StatusText}" Width="175" TextAlignment="Center"/>
                 </Border>
             </StackPanel>
             <StackPanel>
                 <Button Command="{Binding ConnectCommand}" Content="Подключиться к серверу" Width="250" Margin="0 20"/>
-                <Button x:Name="disconnect" Content="Отключиться от сервера" Width="250"/>
+                <Button Command="{Binding DisconnectCommand}" Content="Отключиться от сервера" Width="250"/>
             </StackPanel>
         </StackPanel>
 
-        <DataGrid Grid.Column="1" ItemsSource="{Binding Points}" AutoGenerateColumns="False" Margin="10">
+        <DataGrid Grid.Column="1" Grid.RowSpan="2" ItemsSource="{Binding Points}" AutoGenerateColumns="False" Margin="10">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Координата по оси X" Binding="{Binding X}"/>
                 <DataGridTextColumn Header="Координата по оси Y" Binding="{Binding Y}"/>
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="10">
-            <TextBlock Text="Текущее значение Пи:" Margin="10"/>
-            <Border BorderBrush="#4C000000" BorderThickness="2" CornerRadius="7" Height="30">
-                <TextBox x:Name="pi" TextAlignment="Center" VerticalAlignment="Center" BorderThickness="0"/>
-            </Border>
-        </StackPanel>
+        
     </Grid>
 </Window>
