@@ -8,14 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using static Сalculating_Pi_ClientServer.Connections;
 
 namespace Сalculating_Pi_ClientServer
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Point> Points { get; set; }
-        
-        
+        public ObservableCollection<Point> Points { get; set; }       
         
         Random random = new Random();
 
@@ -23,7 +22,7 @@ namespace Сalculating_Pi_ClientServer
         double m_coordinateY;
         string m_statusText;
         SolidColorBrush m_statusColor;
-        double m_pi;        
+        double m_pi;
 
         RelayCommand m_connectCommand;
         RelayCommand m_disconnectCommand;
@@ -87,9 +86,7 @@ namespace Сalculating_Pi_ClientServer
             Points = new ObservableCollection<Point>();
             StatusColor = new SolidColorBrush(Colors.Red);
             StatusText = "Offline";            
-        }
-
-        
+        }        
 
         public RelayCommand ConnectCommand
         {
@@ -98,10 +95,13 @@ namespace Сalculating_Pi_ClientServer
                 return m_connectCommand ??
                     (m_connectCommand = new RelayCommand(obj =>
                     {
-                        Application.Current.Dispatcher.InvokeAsync(() =>
+                        Application.Current.Dispatcher.InvokeAsync(async () =>
                         {
-                            ConnectToServer();
+                            await ConnectToServer();
+                            await ReceivePiAsync();
                         });
+                        StatusColor = new SolidColorBrush(Colors.Green);
+                        StatusText = "Online";
                     }));
             }
         }
@@ -116,6 +116,9 @@ namespace Сalculating_Pi_ClientServer
                         Application.Current.Dispatcher.InvokeAsync(() =>
                         {
                             DisconnectFromServer();
+
+                            StatusColor = new SolidColorBrush(Colors.Red);
+                            StatusText = "Ofline";
                         });
                     }));
             }
@@ -174,21 +177,16 @@ namespace Сalculating_Pi_ClientServer
             get
             {
                 return m_sendPointListToServerCommand ??
-                    (m_sendPointListToServerCommand = new RelayCommand(obj =>
+                    (m_sendPointListToServerCommand = new RelayCommand(async obj =>
                     {
-
+                        await Task.Run(async () =>
+                        {
+                            await SendPointListAsync(Points);
+                        });
                     }));
             }
         }
-
-        private void ConnectToServer()
-        {
-
-        }
-        private void DisconnectFromServer()
-        {
-
-        }
+               
 
         public event PropertyChangedEventHandler PropertyChanged;
 

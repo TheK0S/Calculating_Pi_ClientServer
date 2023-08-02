@@ -21,11 +21,17 @@ namespace Сalculating_Pi_ClientServer
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static ViewModel viewModel = new ViewModel();
         public MainWindow()
         {
             InitializeComponent();
 
-            DataContext = new ViewModel();
+            DataContext = viewModel;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Connections.DisconnectFromServer();
         }
     }
 }
