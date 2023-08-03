@@ -22,11 +22,21 @@ namespace Calculating_Pi_Server
         static int insideCircle = 0;
         static object locker = new object();
 
+        static IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+        static int port = 8080;
+
         static void Main(string[] args)
         {
-            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-            int port = 8080;
+            Task task = new Task(()=> { AcceptAsyncServer(); });
+            task.Start();
+            Thread.CurrentThread.Join();
 
+            Console.WriteLine("Сервер остановлен");
+            Console.ReadKey();
+        }
+
+        private static async Task AcceptAsyncServer()
+        {
             Socket listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             listener.Bind(new IPEndPoint(ipAddress, port));
             listener.Listen(10);
@@ -34,7 +44,7 @@ namespace Calculating_Pi_Server
 
             while (true)
             {
-                Socket client = listener.Accept();
+                Socket client = await listener.AcceptAsync();
 
                 int clientId = Id++;
 
@@ -43,8 +53,8 @@ namespace Calculating_Pi_Server
                 clients.TryAdd(clientId, client);
 
                 _ = HandleClientMessagesAsync(clientId);
-            }
-        }
+    }
+}
 
         private static async Task HandleClientMessagesAsync(int clientId)
         {
